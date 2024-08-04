@@ -5,6 +5,7 @@ TEXTCOLOR ="#FFFFFF"
 FRAME_TITLEBAR_BG ="#008A44"
 FRAME_MENUBAR_BG = "#262626"
 SWITCH_COLOR = "#5F5F5F"
+FRAME_DASHBOARD_BG = '#343233'
 
 window = Tk()
 
@@ -102,12 +103,77 @@ lib_profile_button.grid(row=4,column=0,padx=13,pady=(0,35))
 lib_logout_button.grid(row=5,column=0,padx=13,pady=(30))
 
 
-trylabel = Label(window,text="check",fg="white",bg="black")
+frame_dashboard = Frame(window,bg=FRAME_DASHBOARD_BG,width=1120)
+frame_dashboard.grid_propagate(0)
+welcome_label = Label(frame_dashboard,text="WELCOME Username",font=("Arial",30,"bold"),fg=FRAME_TITLEBAR_BG,bg=FRAME_DASHBOARD_BG,anchor="w",width=45)
+welcome_label.grid(row =0,column=0,padx=15,pady=(10,0),sticky="wn")
+
+frametracker = Frame(frame_dashboard,bg=FRAME_DASHBOARD_BG)
+frametracker.grid_columnconfigure(0,weight=1)
+frametracker.grid_columnconfigure(1,weight=1)
+frametracker.grid_columnconfigure(2,weight=1)
+
+frametotalbooks = Frame(frametracker,bg=FRAME_MENUBAR_BG)
+frametotalbooks.grid(row=0,column=0,padx=(15,20),sticky="w")
+labeltotalbooks =Label(frametotalbooks,text="Total Books",font=("ArialBold",16),fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG,width=16)
+labelbooksquantity = Label(frametotalbooks,text="0",font=("ArialBold",16),fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG)
+labeltotalbooks.grid(row=0,column=0,padx=20,pady=(10,5))
+labelbooksquantity.grid(row=1,column=0,pady=5)
+
+frametotalrequests = Frame(frametracker,bg=FRAME_MENUBAR_BG)
+frametotalrequests.grid(row=0,column=1,padx=80)
+labeltotalrequests =Label(frametotalrequests,text="Total Book Request",font=("ArialBold",16),fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG,width=16)
+labelrequestquantity = Label(frametotalrequests,text="0",font=("ArialBold",16),fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG)
+labeltotalrequests.grid(row=0,column=0,padx=20,pady=(10,5))
+labelrequestquantity.grid(row=1,column=0,pady=5)
+
+frametotalfines = Frame(frametracker,bg=FRAME_MENUBAR_BG)
+frametotalfines.grid(row=0,column=2,padx=(20,15),sticky="e")
+labeltotalfines =Label(frametotalfines,text="Fines Remianing",font=("ArialBold",16),fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG,width=16)
+labelfinesquantity = Label(frametotalfines,text=f"$0",font=("ArialBold",16),fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG)
+labeltotalfines.grid(row=0,column=0,padx=20,pady=(10,5))
+labelfinesquantity.grid(row=1,column=0,pady=5)
+
+quickreqlabel = Label(frame_dashboard,text="Quick Request",font=("ArialBold",14),fg=TEXTCOLOR,bg=FRAME_DASHBOARD_BG)
 
 
+
+framequickrequesttable = Frame(frame_dashboard,bg=FRAME_MENUBAR_BG,height=240)
+framequickrequesttable.grid_columnconfigure(0,weight=0)
+framequickrequesttable.grid_columnconfigure(1,weight=1)
+framequickrequesttable.grid_columnconfigure(2,weight=1)
+framequickrequesttable.grid_columnconfigure(3,weight=0)
+framequickrequesttable.grid_columnconfigure(4,weight=0)
+framequickrequesttable.grid_propagate(0)
+
+
+Lbookid = Label(framequickrequesttable,text="Book ID",font=("ArialLightRegular",12),fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG).grid(row=1,column=0,padx=35,sticky="w")
+Lbookname = Label(framequickrequesttable,text="Book Name",font=("ArialLightRegular",12),fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG).grid(row=1,column=1,padx=5,sticky="w")
+Lauthor = Label(framequickrequesttable,text="Author",font=("ArialLightRegular",12),fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG).grid(row=1,column=2,sticky="w")
+Lavialable = Label(framequickrequesttable,text="Avialable",font=("ArialLightRegular",12),fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG).grid(row=1,column=3,padx=35,sticky="w")
+Ladd = Label(framequickrequesttable,text="Add",font=("ArialLightRegular",12),fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG,width=5).grid(row=1,column=4,padx=10,sticky="we")
+
+latestbooklabel = Label(frame_dashboard,text="Latest Book Added",font=("ArialBold",14),fg=TEXTCOLOR,bg=FRAME_DASHBOARD_BG)
+framelatestbooks = Frame(frame_dashboard,bg=FRAME_DASHBOARD_BG,height=230,width=900,)
+framelatestbooks.grid_columnconfigure(0,weight=1)
+framelatestbooks.grid_columnconfigure(1,weight=1)
+framelatestbooks.grid_columnconfigure(2,weight=1)
+framelatestbooks.grid_columnconfigure(3,weight=1)
+framelatestbooks.grid_propagate(0)
+b1=PhotoImage(file="books/b1.png")
+buttonb1=Button(framelatestbooks,image=b1,bg=FRAME_DASHBOARD_BG,borderwidth=0,activebackground=FRAME_DASHBOARD_BG)
+buttonb1.grid(row=0,column=0,padx=(20,0),sticky="w")
+
+
+
+frametracker.grid(row=1,column=0,padx=10,pady=2,sticky="wne")
+quickreqlabel.grid(row=2,column=0,padx=25,pady=(4,3),sticky="w")
+framequickrequesttable.grid(row=3,column=0,padx=(25,25),pady=2,sticky="wne")
+latestbooklabel.grid(row=4,column=0,padx=25,pady=(4,3),sticky="w")
+framelatestbooks.grid(row=5,column=0,padx=(25,25),pady=2,sticky="wnes")
 
 #placing frames
 frame_titlebar.grid(row=0, column=0,columnspan=2,sticky="we")
 frame_menubar.grid(row=1,column=0,sticky="wsn")
-trylabel.grid(row=1,column=1,sticky="news")
+frame_dashboard.grid(row=1,column=1,padx=(20,0),pady=(10,0),sticky="ns",)
 window.mainloop()
