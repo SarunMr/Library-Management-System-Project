@@ -21,7 +21,7 @@ def LOGIN_PAGE():     #first page
     login_frame = Frame(main,bg='#262626')
     #adding widgets
     #username
-    label_user_name = Label(login_frame,text="Email or Username",fg='white',bg='#262626',font=("Arial",18,"bold"))
+    label_user_name = Label(login_frame,text="Email or UserID",fg='white',bg='#262626',font=("Arial",18,"bold"))
     entry_name = Entry(login_frame,bg="#131313",fg="white",font=("Arial",20),width=25,insertbackground="#008A44")
     #password
     label_password = Label(login_frame,text="Password",fg='white',bg='#262626',font=("Arial",18,"bold"))
