@@ -15,7 +15,7 @@ menubuttontoggle_icon = PhotoImage(file="icons_lib/cross.png")
 dashboard_icon = PhotoImage(file="icons_lib/dash_icon.png")
 request_books_icon = PhotoImage(file="icons_lib/request_books_icon.png")
 return_books_icon = PhotoImage(file="icons_lib/return_ic.png")
-books_log_icon =PhotoImage(file="icons_lib/log_icon.png")
+view_users_icon = PhotoImage(file="icons_lib/log_icon.png")
 profile_icon =PhotoImage(file="icons_lib/profile.png")
 logout_icon = PhotoImage(file="icons_lib/logout_icon.png")
 
@@ -27,8 +27,8 @@ window.grid_columnconfigure(1,weight=1)
 window.grid_rowconfigure(1,weight=1)
 
 def update_label_color_on_tap(n):
-    label_dict = {"1":lib_dash_label,"2":lib_requestbook_label,"3":lib_returnbook_label,"4":lib_profile_label}
-    btn_dict = {"1":lib_dash_button,"2":lib_request_book_button,"3":lib_return_book_button,"4":lib_profile_button}
+    label_dict = {"1":lib_dash_label,"2":lib_requestbook_label,"3":lib_returnbook_label,"4":lib_view_request_label,"5":lib_profile_label}
+    btn_dict = {"1":lib_dash_button,"2":lib_request_book_button,"3":lib_return_book_button,"4":lib_view_request_button,"5":lib_profile_button}
     for label in label_dict.keys():
         if label == n:
             label_dict[label].config(bg=SWITCH_COLOR)
@@ -40,7 +40,7 @@ def update_label_color_on_tap(n):
 
 
 def default_menubar():
-    labellst = [lib_dash_label,lib_requestbook_label,lib_returnbook_label,lib_profile_label]
+    labellst = [lib_dash_label,lib_requestbook_label,lib_returnbook_label,lib_view_request_label,lib_profile_label]
     for label in labellst:
         label.config(width=10)
     
@@ -48,21 +48,21 @@ def default_menubar():
     lib_dash_button.config(text="",width=45,)
     lib_request_book_button.config(text="",width=45)
     lib_return_book_button.config(text="",width=45)
+    lib_view_request_button.config(text="",width=45)
     lib_profile_button.config(text="",width=45)
-    lib_logout_button.config(text="")
     lib_menu_button.config(command=extend_menubar)
 
 
 def extend_menubar():
-    labellst = [lib_dash_label,lib_requestbook_label,lib_returnbook_label,lib_profile_label]
+    labellst = [lib_dash_label,lib_requestbook_label,lib_returnbook_label,lib_view_request_label,lib_profile_label]
     for label in labellst:
         label.config(width=40)
 
     lib_menu_button.config(image=menubuttontoggle_icon,padx=13,pady=30)
     lib_dash_button.config(text="Dashboard",width=200,padx=20,anchor="w")
-    lib_request_book_button.config(text="Request Books",width=200,padx=20,anchor="w")
-    lib_return_book_button.config(text="Return Books",width=200,padx=20,anchor="w")
-    # lib_log_button.config(text="Books Log",width=200,padx=20,anchor="w")
+    lib_request_book_button.config(text="View Request",width=200,padx=20,anchor="w")
+    lib_return_book_button.config(text="Manage Books",width=200,padx=20,anchor="w")
+    lib_view_request_button.config(text="View Users",width=200,padx=20,anchor="w")
     lib_profile_button.config(text="Your Profile",width=200,padx=20,anchor="w")
     lib_logout_button.config(text="Log out")
     lib_menu_button.config(command=default_menubar)
@@ -70,7 +70,7 @@ def extend_menubar():
 def dashboardframe():
     frame_dashboard = Frame(window,bg=FRAME_DASHBOARD_BG,width=1120)
     frame_dashboard.grid_propagate(0)
-    welcome_label = Label(frame_dashboard,text="WELCOME Username",font=("Arial",30,"bold"),fg=FRAME_TITLEBAR_BG,bg=FRAME_DASHBOARD_BG,anchor="w",width=45)
+    welcome_label = Label(frame_dashboard,text="WELCOME AdminName",font=("Arial",30,"bold"),fg=FRAME_TITLEBAR_BG,bg=FRAME_DASHBOARD_BG,anchor="w",width=45)
     welcome_label.grid(row =0,column=0,padx=15,pady=(10,0),sticky="wn")
 
     frametracker = Frame(frame_dashboard,bg=FRAME_DASHBOARD_BG)
@@ -222,18 +222,60 @@ def returnbooksframe():
     lblissueamount.grid(row=4,column=0,padx=(80,20),pady=(25,15),sticky="w")
     entissueamount = Entry(framereturndetails,font=("Arial",18),width=30)
     entissueamount.grid(row=4,column=1,padx=(0,10),pady=5,sticky="e")  
-    framereturndetails.grid(row=3,column=0,padx=(20,0),pady=(10,0),sticky="ns")
+    framereturndetails.grid(row=1,column=0,padx=(20,0),pady=(10,0),sticky="ns")
+
     Addbookbutton= Button(framereturnbooks,text="Add book",bg ='#008A44',fg=TEXTCOLOR,font=("Arial",14,"bold"),width=20)
     Addbookbutton.grid(row=6,column=0,pady=140)
     Removebookbutton= Button(framereturnbooks,text="Remove",bg ='#FF4500',fg=TEXTCOLOR,font=("Arial",14,"bold"),width=20)
-    Removebookbutton.grid(row=6,column=2,pady=140)
+    Removebookbutton.grid(row=6,column=1,pady=140)
+    # Photo placeholder
+    frame_photo = Frame(framereturnbooks, background="white", width=150, height=150)
+    frame_photo.grid(row=1, column=1, padx=(50, 20), pady=(0, 20), sticky='ne')
+    frame_photo.grid_propagate(0)
+
+    # Upload Photo button
+    upload_button = Button(framereturnbooks, text="Upload Photo", bg='#008A44', fg=TEXTCOLOR, font=("Arial", 12), width=15)
+    upload_button.grid(row=1, column=1, padx=(80, 20), pady=(0, 20), sticky='')
+
     framereturnbooks.grid(row=1,column=1,padx=(20,0),pady=(10,0),sticky="ns")
 
-    #for photo
-    frame_photo = Frame(returnbooksframe,background=FRAME_DASHBOARD_BG)
-    entphoto = Entry(frame_photo,font=("Arial",40),width='10')
-    entphoto.grid(row=0,column=1)
-    frame_photo.grid(row=1,column = 1,padx=(100,0),pady=(80,0),sticky='e')
+
+
+def viewuserframe():
+    frameviewuser = Frame(window, bg=FRAME_DASHBOARD_BG, width=1120)
+    frameviewuser.grid_propagate(0)
+
+    # All User section
+    lbl_all_user = Label(frameviewuser, text="All User", font=("Arial", 16, "bold"), fg="white",bg=FRAME_DASHBOARD_BG)
+    lbl_all_user.grid(row=0, column=0, sticky="w", padx=10, pady=10)
+
+    # User list area (placeholder)
+    user_list_frame = Frame(frameviewuser, bg=FRAME_MENUBAR_BG, width=1100, height=300)
+    user_list_frame.grid(row=1, column=0, columnspan=2, padx=10, pady=(0, 20), sticky="nsew")
+    user_list_frame.grid_propagate(0)
+    frameuserdetails =Frame(frameviewuser, bg=FRAME_DASHBOARD_BG)
+    # User details section
+    lbl_userid = Label(frameuserdetails, text="UserID :", font=("Arial", 15), fg="white", bg=FRAME_DASHBOARD_BG)
+    lbl_userid.grid(row=0, column=0, sticky="w", padx=(50, 5), pady=5)
+    entry_userid = Entry(frameuserdetails, font=("Arial", 15), width=20)
+    entry_userid.grid(row=0, column=1, sticky="w", padx=(80, 10), pady=5)
+
+    lbl_username = Label(frameuserdetails, text="Username :", font=("Arial", 15), fg="white", bg=FRAME_DASHBOARD_BG)
+    lbl_username.grid(row=0, column=2, sticky="w", padx=(140, 10), pady=10)
+    entry_username = Entry(frameuserdetails, font=("Arial", 15), width=20)
+    entry_username.grid(row=0, column=3, sticky="w", padx=(60, 10), pady=5)
+
+    lbl_fine_amount = Label(frameuserdetails, text="Fine Amount :", font=("Arial", 15), fg="white", bg=FRAME_DASHBOARD_BG)
+    lbl_fine_amount.grid(row=1, column=0, sticky="w", padx=(10, 5), pady=5)
+    entry_fine_amount = Entry(frameuserdetails, font=("Arial", 15), width=20)
+    entry_fine_amount.grid(row=1, column=1, sticky="w", padx=(80, 10), pady=5)
+
+    frameuserdetails.grid(row=3,column=0)
+    # Send Fine button
+    btn_send_fine = Button(frameviewuser, text="Send Fine", font=("Arial", 12, "bold"), bg="#008A44", fg="white", width=15)
+    btn_send_fine.grid(row=4, column=0, padx=10, pady=80)
+
+    frameviewuser.grid(row=1, column=1, padx=(20, 0), pady=(10, 0), sticky="ns")
 
 
 def yourprofile():
@@ -303,10 +345,10 @@ lib_requestbook_label = Label(frame_menubar,bg=FRAME_MENUBAR_BG,height=4,width=1
 lib_request_book_button =Button(frame_menubar,image=request_books_icon,font=("Arial",15,"bold"),compound=LEFT,fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG,borderwidth=0,activebackground=SWITCH_COLOR,command=lambda:[update_label_color_on_tap("2"),switchframe(makerequestframe)])
 lib_returnbook_label = Label(frame_menubar,bg=FRAME_MENUBAR_BG,height=4,width=10)
 lib_return_book_button =Button(frame_menubar,image=return_books_icon,font=("Arial",15,"bold"),compound=LEFT,fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG,borderwidth=0,activebackground=SWITCH_COLOR,command=lambda:[update_label_color_on_tap("3"),switchframe(returnbooksframe)])
-# lib_log_label = Label(frame_menubar,bg=FRAME_MENUBAR_BG,height=4,width=10)
-# lib_log_button =Button(frame_menubar,image=books_log_icon,font=("Arial",15,"bold"),compound=LEFT,fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG,borderwidth=0,activebackground=SWITCH_COLOR,command=lambda:update_label_color_on_tap("4"))
+lib_view_request_label = Label(frame_menubar,bg=FRAME_MENUBAR_BG,height=4,width=10)
+lib_view_request_button =Button(frame_menubar,image=view_users_icon,font=("Arial",15,"bold"),compound=LEFT,fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG,borderwidth=0,activebackground=SWITCH_COLOR,command=lambda:{update_label_color_on_tap("4"),switchframe(viewuserframe)})
 lib_profile_label = Label(frame_menubar,bg=FRAME_MENUBAR_BG,height=4,width=10)
-lib_profile_button =Button(frame_menubar,image=profile_icon,font=("Arial",15,"bold"),compound=LEFT,fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG,borderwidth=0,activebackground=SWITCH_COLOR,command=lambda:[update_label_color_on_tap("4"),switchframe(yourprofile)])
+lib_profile_button =Button(frame_menubar,image=profile_icon,font=("Arial",15,"bold"),compound=LEFT,fg=TEXTCOLOR,bg=FRAME_MENUBAR_BG,borderwidth=0,activebackground=SWITCH_COLOR,command=lambda:[update_label_color_on_tap("5"),switchframe(yourprofile)])
 lib_logout_button =Button(frame_menubar,image=logout_icon,bg=FRAME_MENUBAR_BG,font=("Arial",15,"bold"),compound=LEFT,fg="#FF4500",borderwidth=0,activebackground=FRAME_MENUBAR_BG,)
 
 #placing inside menuframe
@@ -316,11 +358,11 @@ lib_requestbook_label.grid(row=1,column=0,padx=13,pady=(0,35))
 lib_request_book_button.grid(row=1,column=0,padx=13,pady=(0,35))
 lib_returnbook_label.grid(row=2,column=0,padx=13,pady=(0,35))
 lib_return_book_button.grid(row=2,column=0,padx=13,pady=(0,35))
-# lib_log_label.grid(row=3,column=0,padx=13,pady=(0,35))
-# lib_log_button.grid(row=3,column=0,padx=13,pady=(0,35))
-lib_profile_label.grid(row=3,column=0,padx=13,pady=(0,35))
-lib_profile_button.grid(row=3,column=0,padx=13,pady=(0,35))
-lib_logout_button.grid(row=4,column=0,padx=13,pady=(30))
+lib_view_request_label.grid(row=3,column=0,padx=13,pady=(0,35))
+lib_view_request_button.grid(row=3,column=0,padx=13,pady=(0,35))
+lib_profile_label.grid(row=4,column=0,padx=13,pady=(0,35))
+lib_profile_button.grid(row=4,column=0,padx=13,pady=(0,35))
+lib_logout_button.grid(row=5,column=0,padx=13,pady=(30))
 
 
 #placing frames
