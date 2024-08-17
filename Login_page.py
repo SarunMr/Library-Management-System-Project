@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
 import sqlite3
+import subprocess
+import os
 
 def toggle_password():
     if show_password.get():
@@ -16,42 +18,32 @@ def login():
     username = entry_name.get()
     password = entry_password.get()
     
-    if validate_login(username, password):
-        messagebox.showinfo("Login Successful", "Welcome, " + username + "!")
+    user_info = validate_login(username, password)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    if user_info:
+        user_type, user_id = user_info
+        main.destroy()  
+        if user_type.lower() == 'admin':
+            admin_page_path = os.path.join(current_dir, "admin_page.py")
+            subprocess.run(["python", admin_page_path, str(user_id)])
+        else:
+            user_page_path = os.path.join(current_dir, "user_page.py")
+            subprocess.run(["python", user_page_path, str(user_id)])
     else:
         messagebox.showerror("Login Failed", "Invalid username or password")
 
 def validate_login(username, password):
     conn = sqlite3.connect('library.db')
     c = conn.cursor()
-    c.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
+    c.execute("SELECT user_type, id FROM users WHERE username=? AND password=?", (username, password))
     result = c.fetchone()
     conn.close()
-    return result is not None
+    return result if result else None 
 
 def signup():
-    username = entry_name.get()
-    password = entry_password.get()
-    
-    if username and password:
-        if create_user(username, password):
-            messagebox.showinfo("Signup Successful", "Account created for " + username)
-        else:
-            messagebox.showerror("Signup Failed", "Username already exists")
-    else:
-        messagebox.showerror("Signup Failed", "Please enter both username and password")
-
-def create_user(username, password):
-    conn = sqlite3.connect('library.db')
-    c = conn.cursor()
-    try:
-        c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
-        conn.commit()
-        conn.close()
-        return True
-    except sqlite3.IntegrityError:
-        conn.close()
-        return False
+    subprocess.run(["python", "registration_page.py"])
+    main.destroy()  # Close the login window
 
 # Main window setup
 main = tk.Tk()

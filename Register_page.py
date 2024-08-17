@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import sqlite3
 import re
+import subprocess
 
 def create_users_table():
     conn = sqlite3.connect('library.db')
@@ -11,7 +12,9 @@ def create_users_table():
                   username TEXT UNIQUE,
                   password TEXT,
                   email TEXT UNIQUE,
-                  full_name TEXT)''')
+                  full_name TEXT,
+                  fine_amount INETGER DEFAULT 0,
+                  user_type TEXT DEFAULT 'user')''')
     conn.commit()
     conn.close()
 
@@ -53,6 +56,7 @@ def register():
     if create_user(username, password, email, full_name):
         messagebox.showinfo("Registration Successful", "Account created for " + username)
         main.destroy()  # Close the registration window
+        subprocess.run(["python", "Login_page.py"])  # Launch the login page
     else:
         messagebox.showerror("Registration Failed", "Username or email already exists")
 
@@ -60,8 +64,8 @@ def create_user(username, password, email, full_name):
     conn = sqlite3.connect('library.db')
     c = conn.cursor()
     try:
-        c.execute("INSERT INTO users (username, password, email, full_name) VALUES (?, ?, ?, ?)",
-                  (username, password, email, full_name))
+        c.execute("INSERT INTO users (username, password, email, full_name, user_type) VALUES (?, ?, ?, ?, ?)",
+                  (username, password, email, full_name, 'user'))
         conn.commit()
         conn.close()
         return True
