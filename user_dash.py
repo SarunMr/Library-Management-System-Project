@@ -225,7 +225,7 @@ def returnbooksframe():
     framereturndetails.grid(row=3,column=0,padx=(20,0),pady=(10,0),sticky="ns")
     returnbutton= Button(framereturnbooks,text="Return",bg ='#008A44',fg=TEXTCOLOR,font=("Arial",12,"bold"),width=20)
     returnbutton.grid(row=4,column=0,pady=40)
-    framereturnbooks.grid(row=4,column=1,padx=(20,0),pady=(10,0),sticky="ns")
+    framereturnbooks.grid(row=1,column=1,padx=(20,0),pady=(10,0),sticky="ns")
 
 
 
