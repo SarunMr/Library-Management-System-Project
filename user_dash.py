@@ -198,7 +198,7 @@ def returnbooksframe():
     framereturnbooks.grid_propagate(0)
 
     lblYourbooks=Label(framereturnbooks,text="Manage Books",font=("Arial",18,"bold"),fg=TEXTCOLOR,bg=FRAME_DASHBOARD_BG)
-    lblYourbooks.grid(row=0,column=0,padx=30,pady=20,sticky='w')
+    lblYourbooks.grid(row=0,column=0,padx=20,pady=20,sticky='w')
 
 
     framereturndetails = Frame(framereturnbooks,background=FRAME_DASHBOARD_BG)
@@ -223,10 +223,17 @@ def returnbooksframe():
     entissueamount = Entry(framereturndetails,font=("Arial",18),width=30)
     entissueamount.grid(row=4,column=1,padx=(0,10),pady=5,sticky="e")  
     framereturndetails.grid(row=3,column=0,padx=(20,0),pady=(10,0),sticky="ns")
-    returnbutton= Button(framereturnbooks,text="Return",bg ='#008A44',fg=TEXTCOLOR,font=("Arial",12,"bold"),width=20)
-    returnbutton.grid(row=4,column=0,pady=40)
+    Addbookbutton= Button(framereturnbooks,text="Add book",bg ='#008A44',fg=TEXTCOLOR,font=("Arial",14,"bold"),width=20)
+    Addbookbutton.grid(row=6,column=0,pady=140)
+    Removebookbutton= Button(framereturnbooks,text="Remove",bg ='#FF4500',fg=TEXTCOLOR,font=("Arial",14,"bold"),width=20)
+    Removebookbutton.grid(row=6,column=2,pady=140)
     framereturnbooks.grid(row=1,column=1,padx=(20,0),pady=(10,0),sticky="ns")
 
+    #for photo
+    frame_photo = Frame(returnbooksframe,background=FRAME_DASHBOARD_BG)
+    entphoto = Entry(frame_photo,font=("Arial",40),width='10')
+    entphoto.grid(row=0,column=1)
+    frame_photo.grid(row=1,column = 1,padx=(100,0),pady=(80,0),sticky='e')
 
 
 def yourprofile():
