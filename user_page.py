@@ -1,5 +1,4 @@
 from tkinter import *
-from PIL import *
 import tkinter.ttk as ttk
 from tkinter import messagebox
 import os
@@ -520,10 +519,6 @@ def yourprofile():
     frameyourprofile = tk.Frame(window, bg=FRAME_DASHBOARD_BG, width=1120)
     frameyourprofile.grid_propagate(0)
 
-    # Photo placeholder
-    photo_placeholder = tk.Frame(frameyourprofile, width=150, height=150, bg='grey')
-    photo_placeholder.grid(row=0, column=0, padx=10, pady=(30,10))
-
     # Form fields
     framecredential = tk.Frame(frameyourprofile, bg=FRAME_DASHBOARD_BG, width=1100, height=300)
     framecredential.grid_propagate(0)
@@ -539,24 +534,10 @@ def yourprofile():
     lastnameent = tk.Entry(framecredential, font=("Arial",18), bg=FRAME_MENUBAR_BG, fg=TEXTCOLOR)
     lastnameent.grid(row=2, column=1, sticky='we', padx=10, pady=15)
 
-    contactlbl = tk.Label(framecredential, text="Contact:", font=("Arial",18), bg=FRAME_DASHBOARD_BG, fg=TEXTCOLOR)
-    contactlbl.grid(row=3, column=0, sticky='w', padx=(60,10), pady=15)
-    contactent = tk.Entry(framecredential, font=("Arial",18), bg=FRAME_MENUBAR_BG, fg=TEXTCOLOR)
-    contactent.grid(row=3, column=1, sticky='we', padx=10, pady=15)
-
     emaillbl = tk.Label(framecredential, text="Email:", font=("Arial",18), bg=FRAME_DASHBOARD_BG, fg=TEXTCOLOR)
     emaillbl.grid(row=4, column=0, sticky='w', padx=(60,10), pady=15)
     emaillent = tk.Entry(framecredential, bg=FRAME_MENUBAR_BG, font=("Arial",18), fg=TEXTCOLOR)
     emaillent.grid(row=4, column=1, sticky='we', padx=10, pady=15)
-
-    # Gender radio buttons
-    genderlbl = tk.Label(framecredential, text="Gender:", font=("Arial",18), bg=FRAME_DASHBOARD_BG, fg=TEXTCOLOR)
-    genderlbl.grid(row=1, column=2, sticky='e', padx=(30,10), pady=15)
-    gender_var = tk.StringVar()
-    rdM = tk.Radiobutton(framecredential, text="Male", font=("Arial",18), variable=gender_var, value="male", bg=FRAME_DASHBOARD_BG, selectcolor=FRAME_DASHBOARD_BG, fg=TEXTCOLOR)
-    rdM.grid(row=1, column=3, sticky='e', padx=10, pady=15)
-    rdF = tk.Radiobutton(framecredential, text="Female", font=("Arial",18), variable=gender_var, value="female", bg=FRAME_DASHBOARD_BG, selectcolor=FRAME_DASHBOARD_BG, fg=TEXTCOLOR)
-    rdF.grid(row=1, column=4, sticky='e', padx=10, pady=15)
 
     framecredential.grid(row=1, column=0, padx=10, pady=10)
 
@@ -570,20 +551,12 @@ def yourprofile():
     if user_data:
         firstnameent.insert(0, user_data[4].split()[0] if user_data[4] else "")
         lastnameent.insert(0, user_data[4].split()[1] if user_data[4] and len(user_data[4].split()) > 1 else "")
-        contactent.insert(0, user_data[5] if len(user_data) > 5 else "")
         emaillent.insert(0, user_data[3])
-        gender_var.set(user_data[6] if len(user_data) > 6 else "")
         
-        # Load profile picture if it exists
-        if len(user_data) > 7 and user_data[7]:
-            load_profile_picture(photo_placeholder, user_data[7])
-
     def save_profile():
         firstname = firstnameent.get()
         lastname = lastnameent.get()
-        contact = contactent.get()
         email = emaillent.get()
-        gender = gender_var.get()
         full_name = f"{firstname} {lastname}"
 
         conn = sqlite3.connect('library.db')
@@ -591,43 +564,15 @@ def yourprofile():
         try:
             cursor.execute("""
                 UPDATE users 
-                SET full_name = ?, email = ?, contact = ?, gender = ?
+                SET full_name = ?, email = ?
                 WHERE id = ?
-            """, (full_name, email, contact, gender, user_id))
+            """, (full_name, email, user_id))
             conn.commit()
             messagebox.showinfo("Success", "Profile updated successfully")
         except sqlite3.Error as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
         finally:
             conn.close()
-
-    def upload_photo():
-        file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.png *.jpg *.jpeg *.gif *.bmp")])
-        if file_path:
-            try:
-                # Create a directory to store profile pictures if it doesn't exist
-                os.makedirs("profile_pictures", exist_ok=True)
-                
-                # Generate a unique filename
-                _, ext = os.path.splitext(file_path)
-                new_filename = f"user_{user_id}{ext}"
-                new_path = os.path.join("profile_pictures", new_filename)
-                
-                # Copy the selected image to the profile_pictures directory
-                shutil.copy(file_path, new_path)
-                
-                # Update the database with the new image path
-                conn = sqlite3.connect('library.db')
-                cursor = conn.cursor()
-                cursor.execute("UPDATE users SET profile_picture = ? WHERE id = ?", (new_path, user_id))
-                conn.commit()
-                conn.close()
-                
-                # Display the new image
-                load_profile_picture(photo_placeholder, new_path)
-                messagebox.showinfo("Success", "Profile picture updated successfully")
-            except Exception as e:
-                messagebox.showerror("Error", f"An error occurred: {e}")
 
     def delete_account():
         if messagebox.askyesno("Confirm Deletion", "Are you sure you want to delete your account? This action cannot be undone."):
@@ -647,25 +592,12 @@ def yourprofile():
     framebutncredential = tk.Frame(frameyourprofile, bg=FRAME_DASHBOARD_BG, width=1100, height=80)
     framebutncredential.grid_propagate(0)
     tk.Button(framebutncredential, text="Save", font=("Arial",18), bg=FRAME_TITLEBAR_BG, fg=TEXTCOLOR, command=save_profile).grid(row=0, column=0, pady=20, padx=(250,50), sticky='w')
-    tk.Button(framebutncredential, text="Upload Photo", font=("Arial",18), bg=FRAME_TITLEBAR_BG, fg=TEXTCOLOR, command=upload_photo).grid(row=0, column=1, pady=20, padx=50)
     tk.Button(framebutncredential, text="Delete Account", font=("Arial",18), bg=FRAME_TITLEBAR_BG, fg=TEXTCOLOR, command=delete_account).grid(row=0, column=2, pady=20, padx=50, sticky='e')
     framebutncredential.grid(row=2, column=0, padx=10, pady=10, sticky="we")
 
     frameyourprofile.grid(row=1, column=1, padx=(20,0), pady=(10,0), sticky="ns")
 
     return frameyourprofile
-
-def load_profile_picture(photo_placeholder, image_path):
-    try:
-        img = Image.open(image_path)
-        img = img.resize((150, 150), Image.ANTIALIAS)
-        photo = ImageTk.PhotoImage(img)
-        lbl = tk.Label(photo_placeholder, image=photo)
-        lbl.image = photo
-        lbl.pack(fill=tk.BOTH, expand=True)
-    except Exception as e:
-        print(f"Error loading profile picture: {e}") 
- 
 
 def switchframe(current_frame):
     # Clear any existing frame in the main content area

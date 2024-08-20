@@ -8,6 +8,9 @@ import os
 import subprocess
 import sys
 
+my_user_id = int(sys.argv[1])
+
+
 
 #theme color.
 TEXTCOLOR ="#FFFFFF"
@@ -439,23 +442,6 @@ def managebooksframe():
     # Image handling
     selected_image_path = tk.StringVar()
     
-    def upload_photo():
-        file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.png *.jpg *.jpeg *.gif *.bmp")])
-        if file_path:
-            selected_image_path.set(file_path)
-            display_image(file_path)
-    
-    def display_image(file_path):
-        img = Image.open(file_path)
-        img = img.resize((150, 150), Image.ANTIALIAS)
-        photo = ImageTk.PhotoImage(img)
-        img_label = tk.Label(frame_photo, image=photo)
-        img_label.image = photo
-        img_label.pack(fill=tk.BOTH, expand=True)
-    
-    # Upload Photo button
-    upload_button = tk.Button(framemanagebooks, text="Upload Photo", bg='#008A44', fg=TEXTCOLOR, font=("Arial", 12), width=15, command=upload_photo)
-    upload_button.grid(row=1, column=1, padx=(80, 20), pady=(0, 20), sticky='')
     
     def add_book():
         book_name = entbookName.get()
@@ -674,10 +660,6 @@ def yourprofile():
     frameyourprofile = tk.Frame(window, bg=FRAME_DASHBOARD_BG, width=1120)
     frameyourprofile.grid_propagate(0)
 
-    # Photo placeholder
-    photo_placeholder = tk.Frame(frameyourprofile, width=150, height=150, bg='grey')
-    photo_placeholder.grid(row=0, column=0, padx=10, pady=(30,10))
-
     # Form fields
     framecredential = tk.Frame(frameyourprofile, bg=FRAME_DASHBOARD_BG, width=1100, height=300)
     framecredential.grid_propagate(0)
@@ -693,25 +675,10 @@ def yourprofile():
     lastnameent = tk.Entry(framecredential, font=("Arial", 18), bg=FRAME_MENUBAR_BG, fg=TEXTCOLOR)
     lastnameent.grid(row=2, column=1, sticky='we', padx=10, pady=15)
 
-    contactlbl = tk.Label(framecredential, text="Contact:", font=("Arial", 18), bg=FRAME_DASHBOARD_BG, fg=TEXTCOLOR)
-    contactlbl.grid(row=3, column=0, sticky='w', padx=(60,10), pady=15)
-    contactent = tk.Entry(framecredential, font=("Arial", 18), bg=FRAME_MENUBAR_BG, fg=TEXTCOLOR)
-    contactent.grid(row=3, column=1, sticky='we', padx=10, pady=15)
-
     emaillbl = tk.Label(framecredential, text="Email:", font=("Arial", 18), bg=FRAME_DASHBOARD_BG, fg=TEXTCOLOR)
     emaillbl.grid(row=4, column=0, sticky='w', padx=(60,10), pady=15)
     emaillent = tk.Entry(framecredential, bg=FRAME_MENUBAR_BG, font=("Arial", 18), fg=TEXTCOLOR)
     emaillent.grid(row=4, column=1, sticky='we', padx=10, pady=15)
-
-    # Gender radio buttons
-    genderlbl = tk.Label(framecredential, text="Gender:", font=("Arial", 18), bg=FRAME_DASHBOARD_BG, fg=TEXTCOLOR)
-    genderlbl.grid(row=1, column=2, sticky='e', padx=(30,10), pady=15)
-    
-    gender_var = tk.StringVar()
-    rdM = tk.Radiobutton(framecredential, text="Male", font=("Arial", 18), variable=gender_var, value="male", bg=FRAME_DASHBOARD_BG, selectcolor=FRAME_DASHBOARD_BG, fg=TEXTCOLOR)
-    rdM.grid(row=1, column=3, sticky='e', padx=10, pady=15)
-    rdF = tk.Radiobutton(framecredential, text="Female", font=("Arial", 18), variable=gender_var, value="female", bg=FRAME_DASHBOARD_BG, selectcolor=FRAME_DASHBOARD_BG, fg=TEXTCOLOR)
-    rdF.grid(row=1, column=4, sticky='e', padx=10, pady=15)
 
     framecredential.grid(row=1, column=0, padx=10, pady=10)
 
@@ -725,7 +692,7 @@ def yourprofile():
         columns = [column[1] for column in cursor.fetchall()]
         
         # Now, let's fetch the admin data
-        cursor.execute("SELECT * FROM users WHERE id = 1")  # Assuming admin has id 1
+        cursor.execute("SELECT * FROM users WHERE id = ?", (my_user_id,))
         admin_data = cursor.fetchone()
         conn.close()
 
@@ -741,81 +708,33 @@ def yourprofile():
             lastnameent.delete(0, tk.END)
             lastnameent.insert(0, full_name[1] if len(full_name) > 1 else "")
             
-            contactent.delete(0, tk.END)
-            contactent.insert(0, admin_dict.get('contact', ''))
-            
             emaillent.delete(0, tk.END)
             emaillent.insert(0, admin_dict.get('email', ''))
             
-            gender_var.set(admin_dict.get('gender', ''))
             
-            # Load profile picture if it exists
-            image_path = admin_dict.get('image_path', '')
-            if image_path and os.path.exists(image_path):
-                load_profile_picture(image_path)
-        else:
-            messagebox.showwarning("Warning", "Admin data not found. Please check the database.")
-
     load_admin_data()
 
-    def load_profile_picture(image_path):
-        img = Image.open(image_path)
-        img = img.resize((150, 150), Image.ANTIALIAS)
-        photo = ImageTk.PhotoImage(img)
-        img_label = tk.Label(photo_placeholder, image=photo)
-        img_label.image = photo
-        img_label.pack(fill=tk.BOTH, expand=True)
 
     def save_profile():
         firstname = firstnameent.get()
         lastname = lastnameent.get()
-        contact = contactent.get()
         email = emaillent.get()
-        gender = gender_var.get()
-
-        if not all([firstname, lastname, contact, email, gender]):
-            messagebox.showerror("Error", "All fields are required")
-            return
-
         full_name = f"{firstname} {lastname}"
 
         conn = sqlite3.connect('library.db')
         cursor = conn.cursor()
-
         try:
-            cursor.execute('''
+            cursor.execute("""
                 UPDATE users 
-                SET full_name = ?, email = ?, contact = ?, gender = ?
-                WHERE id = 1
-            ''', (full_name, email, contact, gender))
+                SET full_name = ?, email = ?
+                WHERE id = ?
+            """, (full_name, email, my_user_id))
             conn.commit()
             messagebox.showinfo("Success", "Profile updated successfully")
         except sqlite3.Error as e:
-            messagebox.showerror("Database Error", str(e))
+            messagebox.showerror("Error", f"An error occurred: {e}")
         finally:
             conn.close()
-
-    def upload_photo():
-        file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.png *.jpg *.jpeg *.gif *.bmp")])
-        if file_path:
-            try:
-                # Copy image to a folder in your project
-                new_image_path = os.path.join("profile_images", os.path.basename(file_path))
-                os.makedirs("profile_images", exist_ok=True)
-                shutil.copy(file_path, new_image_path)
-
-                # Update database with new image path
-                conn = sqlite3.connect('library.db')
-                cursor = conn.cursor()
-                cursor.execute("UPDATE users SET image_path = ? WHERE id = 1", (new_image_path,))
-                conn.commit()
-                conn.close()
-
-                # Display the new image
-                load_profile_picture(new_image_path)
-                messagebox.showinfo("Success", "Profile picture updated successfully")
-            except Exception as e:
-                messagebox.showerror("Error", f"Failed to upload image: {str(e)}")
 
     def delete_profile():
         if messagebox.askyesno("Confirm Delete", "Are you sure you want to delete your profile? This action cannot be undone."):
@@ -835,7 +754,6 @@ def yourprofile():
     framebutncredential = tk.Frame(frameyourprofile, bg=FRAME_DASHBOARD_BG, width=1100, height=80)
     framebutncredential.grid_propagate(0)
     tk.Button(framebutncredential, text="Save", font=("Arial", 18), bg=FRAME_TITLEBAR_BG, fg=TEXTCOLOR, command=save_profile).grid(row=0, column=0, pady=20, padx=(250,50), sticky='w')
-    tk.Button(framebutncredential, text="Upload Photo", font=("Arial", 18), bg=FRAME_TITLEBAR_BG, fg=TEXTCOLOR, command=upload_photo).grid(row=0, column=1, pady=20, padx=50)
     tk.Button(framebutncredential, text="Delete", font=("Arial", 18), bg=FRAME_TITLEBAR_BG, fg=TEXTCOLOR, command=delete_profile).grid(row=0, column=2, pady=20, padx=50, sticky='e')
     framebutncredential.grid(row=2, column=0, padx=10, pady=10, sticky="we")
 
