@@ -45,6 +45,10 @@ def signup():
     subprocess.run(["python", "registration_page.py"])
     main.destroy()  # Close the login window
 
+def forgot_password_fun():
+    subprocess.run(["python", "forgot.py"])
+
+
 # Main window setup
 main = tk.Tk()
 main.title("Login Page")
@@ -72,7 +76,7 @@ label_showpass = tk.Label(login_frame, text="Show password", bg="#262626", fg="w
 button_Login = tk.Button(login_frame, text="LOG IN", bg='#008A44', fg="white", font=("Arial", 12, "bold"), width=12, command=login)
 
 # Forgot password
-button_forgot_pass = tk.Button(login_frame, text="Forgot Password?", borderwidth=0, font=("Arial", 10, "underline"), fg="white", bg="#262626")
+button_forgot_pass = tk.Button(login_frame, text="Forgot Password?", borderwidth=0, font=("Arial", 10, "underline"), fg="white", bg="#262626", command=forgot_password_fun)
 
 # Sign up
 label_signup = tk.Label(login_frame, text="Don't have an account?", font=("Arial", 11), bg="#262626", fg="#b9b9b9")
